@@ -27,18 +27,15 @@ Modelado y resolución de ecuaciones hiperbólicas (vibraciones, ondas) aplicand
 
 
 📂 Otros contenidos  
+
 📄 Practicas  
-Implementaciones guiadas de cada tema, con código MATLAB y comentarios para reforzar la teoría con ejercicios prácticos.
+Prácticas evaluádas durante la asignatura (40% de la nota)  
 
 📁 pec2  
-Proyecto obligatorio con desarrollo completo del problema propuesto y resolución detallada.
-
+prueba de evaluación progresiva 2.
 🧪 examen  
-Colección de exámenes y simulacros resueltos para practicar la parte teórica y práctica del curso.
-
-📝 ejercicios_tema1
-Ejercicios conceptuales del tema 1: formulación débil, espacio solución y funciones de prueba.
+Exámenes de este curso
 
 📂 trabajo
-Trabajo final del curso o entrega especial vinculada a la asignatura.
+Trabajo final del curso.
 
