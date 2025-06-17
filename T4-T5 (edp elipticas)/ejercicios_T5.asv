@@ -1,0 +1,523 @@
+%% EJERCICIOS TEMA 5
+
+save("mallado_aula_trabajo.m","t","e","p")
+
+%% comprobar frontera
+
+% comprobar frontera
+figure
+hold on
+scatter(xi(fron_t),yi(fron_t),'b')
+scatter(xi(fron1),yi(fron1),'r','.')
+hold off
+
+%% ej 1
+
+%en este ejercicio tendremos que resolver un pef en 1D lineal que tene
+%condiciones dirichlet homogéneas
+% A*u = b  siendo A= a*M + k*R  ;  b=f*M
+
+
+ f = @(x) sin(pi*x);
+    a=1 ;
+    k=1 ;
+
+% Intervalo
+    c=0 ;
+    d=1 ;
+
+% NODOS:
+    % equiespaciados:
+   
+    h = 1/5; 
+    Ne=ceil((d-c)/h);
+    xi = c:h:d;   %nodos
+
+
+Calcular_Matriz_Masa_Rigidez_Lineal1D
+
+A = a*M+k*R;
+A0 = A; %En vez de redimensionalizar, ponemos cero en la 1 y ult fila y columna (menos en posición 11 y NN)
+A0([1 end],:) = 0; %Es lo mismo que poner A0(1,:)=0 y A0(end,:)=0
+A0(:,[1 end]) = 0; %Es lo mismo que pober A0(:,1)=0 y A0(:,end)=0
+A0(1,1) = 1;
+A0(end,end) = 1;
+
+fi=f(xi)';
+
+vect_b=M*fi;
+vect_b0=vect_b;
+vect_b0([1 end])=0;
+
+
+uh=A0\vect_b0; % solución del PEF
+
+figure
+
+plot(xi,uh)
+
+
+%% 
+% ahora voy a hacerlo con un bucle para calcular todas las suluciones dependiendo de la h
+
+f = @(x) sin(pi*x);
+    a=1 ;
+    k=1 ;
+
+% Intervalo
+    c=0 ;
+    d=1 ;
+
+    h = [1/5 1/10 1/20 1/40 1/80];
+
+   % Uh = cell(1, length(h));
+figure('Name','elementos finitos lineales diferentes h')
+
+for j=1:length(h)
+
+    Ne=ceil((d-c)/h(j));
+    xi = c:h(j):d;   %nodos
+
+
+Calcular_Matriz_Masa_Rigidez_Lineal1D
+
+A = a*M+k*R;
+A0 = A; %En vez de redimensionalizar, ponemos cero en la 1 y ult fila y columna (menos en posición 11 y NN)
+A0([1 end],:) = 0; %Es lo mismo que poner A0(1,:)=0 y A0(end,:)=0
+A0(:,[1 end]) = 0; %Es lo mismo que pober A0(:,1)=0 y A0(:,end)=0
+A0(1,1) = 1;
+A0(end,end) = 1;
+
+fi=f(xi)';
+
+vect_b=M*fi;
+vect_b0=vect_b;
+vect_b0([1 end])=0;
+
+
+uh=A0\vect_b0; % solución del PEF
+
+hold on
+plot(xi,uh)
+hold off
+
+%Uh{1,j}=uh; %celula con todas las soluciones
+end
+
+%% EJERCICIO 2
+
+% ahora las matrices de masas y rigidez serán de 3x3 ya que habrá 3
+% funciones base 
+
+
+ f = @(x) sin(pi*x);
+    a=1 ;
+    k=1 ;
+
+% Intervalo
+    c=0 ;
+    d=1 ;
+
+% NODOS:
+    % equiespaciados:
+   
+    h = 1/5; 
+    Ne=ceil((d-c)/h);
+    xi = c:h/2:d;   %nodos ahora es h/2 ya que necesitamos también los nodos intermedios
+
+
+
+Calcular_Matriz_Masa_Rigidez_Cuadratico1D
+
+A = a*M+k*R;
+A0 = A; %En vez de redimensionalizar, ponemos cero en la 1 y ult fila y columna (menos en posición 11 y NN)
+A0([1 end],:) = 0; %Es lo mismo que poner A0(1,:)=0 y A0(end,:)=0
+A0(:,[1 end]) = 0; %Es lo mismo que pober A0(:,1)=0 y A0(:,end)=0
+A0(1,1) = 1;
+A0(end,end) = 1;
+
+fi=f(xi)';
+
+vect_b=M*fi;
+vect_b0=vect_b;
+vect_b0([1 end])=0;
+
+
+uh=A0\vect_b0; % solución del PEF
+
+figure
+
+plot(xi,uh)
+
+
+%% EJERCICIO 6
+
+% resolver: A*u =b* k*phi(1)   %phi(1)=1
+
+ f = @(x) 0*x +1;
+    a=1 ;
+    k=1 ;
+
+% Intervalo
+    c=0 ;
+    d=1 ;
+
+% NODOS:
+    % equiespaciados:
+   
+    h = 1/5; 
+    Ne=ceil((d-c)/h);
+    xi = c:h:d;   %nodos
+
+
+Calcular_Matriz_Masa_Rigidez_Lineal1D
+
+A = a*M+k*R;
+A0 = A; %En vez de redimensionalizar, ponemos cero en la 1 y ult fila y columna (menos en posición 11 y NN)
+A0(1,:) = 0; 
+A0(:,1) = 0;
+A0(1,1) = 1;
+
+fi=f(xi)';
+
+vect_b=M*fi;
+vect_b0=vect_b;
+vect_b0(1)=0;    %la condicion que me dan en 0
+
+vect_b0(end)= vect_b0(end)+ k;
+
+uh=A0\vect_b0 ; % solución del PEF
+
+figure
+
+plot(xi,uh)
+
+%% EJERCICIO 7
+clear all
+a=1; 
+k=1; 
+c=0; 
+d=1;
+
+Ne=25; h=(d-c)/Ne; xi=c:h/2:d;%h/2 porque también necesitamos los nodos intermedios
+
+Calcular_Matriz_Masa_Rigidez_Cuadratico1D
+
+A= a*M + k*R;
+
+fi=zeros(1, length(xi)); 
+for i=1:length(xi)
+    fi(i)=fun_trozos(xi(i));
+end 
+fi=fi';
+vect_b=M*fi;
+
+%Ahora aplico las condiciones de contorno para construir A0 y vect_b0
+A0=A;
+vect_b0=vect_b;
+
+%SOLUCIÓN Y GRÁFICO
+uh=A0\vect_b0;
+figure
+hold on
+plot(xi,uh,'-o',col='c')
+
+
+%% funcion a trozos
+function[f]=fun_trozos(x)
+    if x<=1
+            f=@(x) 1-x; 
+            f=f(x);
+    else 
+            f=2; 
+    end 
+end
+
+
+%% EJERCICIO 1 PRÁCTICA 2
+clear all
+f = @(x) 2 + sin(pi*x);
+    a=1 ;
+    k=0.005 ;
+
+% Intervalo
+    c=0 ;
+    d=2 ;
+
+% NODOS:
+    % equiespaciados:
+   
+    h = 1/100; 
+    Ne=ceil((d-c)/h);
+    xi = c:h:d;   %nodos
+
+
+Calcular_Matriz_Masa_Rigidez_Lineal1D
+
+A = a*M+k*R;
+A0 = A; %En vez de redimensionalizar, ponemos cero en la 1 y ult fila y columna (menos en posición 11 y NN)
+A0([1 end],:) = 0; %Es lo mismo que poner A0(1,:)=0 y A0(end,:)=0
+A0(:,[1 end]) = 0; %Es lo mismo que pober A0(:,1)=0 y A0(:,end)=0
+A0(1,1) = 1;
+A0(end,end) = 1;
+
+fi=f(xi)';
+
+% como no homo defino g
+gi = 0*xi';
+gi(1) = 2;
+gi(end) = 0;
+
+vect_b=(M+R)*fi;
+vect_b0=vect_b;
+vect_b0([1 end])=0;
+
+
+wh=A0\vect_b0; 
+uh= wh + gi;
+
+figure
+
+plot(xi,uh, 'm')
+
+
+%% EJERCICIO 2 PRÁCTICA 2
+
+ f = @(x) 2 + sin(pi*x);
+    a=1 ;
+    k=0.005 ;
+
+% Intervalo
+    c=0 ;
+    d=2 ;
+
+% parámetros condición robin
+alpha2 = 1;
+beta2 = k;
+g2 = 0; 
+% NODOS:
+    % equiespaciados:
+   
+    h = 1/50; 
+    Ne=ceil((d-c)/h);
+    xi = c:h:d;   %nodos
+
+
+Calcular_Matriz_Masa_Rigidez_Lineal1D
+
+%personalizamos las matrices 
+A = a*M+k*R;
+A0 = A; 
+A0(end,end) = A0(end,end) + k*alpha2/beta2;
+
+fi=f(xi)';
+
+vect_b=M*fi;
+vect_b0 = vect_b;
+vect_b0(end) = vect_b0(end)+ k*g2/beta2;
+
+uh=A0\vect_b0 ; % solución del PEF
+
+figure
+
+plot(xi,uh)
+
+%% EJERCICO 8
+
+load("malla_ej8.mat")
+% Parámetros de la EDP
+f = @(x,y) 01-x.^2;
+g=@(x,y) 4*x+4;
+a=1;
+k=1e-4;
+fron_t = unique([e(1,:) e(2,:)]);
+
+% Cargar coordenadas nodos
+xi = p(1,:); 
+yi = p(2,:);
+fron_d=find((xi==-1|xi == 1| yi==0| yi==1) & (xi + 2*yi > 1));
+
+[R,M]=assema(p,t,1,1,0);
+
+A=a*M+k*R;
+
+% mtriz A
+A0=A;
+A0(fron_d,:)=0; %es 0 en la frontera
+A0(:,fron_d)=0;
+for i=fron_d
+ A0(i,i)=1; %eso va recorriendo los vectores de la frontera
+end
+
+% vector b
+gi=0*xi;
+gi(fron_d)=g(xi(fron_d),yi(fron_d));
+fi=f(xi,yi);
+
+vect_b=-A*gi'+M*fi';
+vect_b0 = vect_b;
+vect_b0(fron_d)=0;
+
+wh=A0\vect_b0;
+uh=wh+gi';
+trisurf(t(1:3,:)',xi,yi,uh)
+%%
+% comprobar frontera
+figure
+hold on
+scatter(xi(fron_t),yi(fron_t),'b')
+scatter(xi(fron_d),yi(fron_d),'r','.')
+hold off
+
+
+%%  EJERCICIO 9
+
+load("malla_ej9.mat")
+
+f = @(x,y) 0.*x+2;
+
+a=0;
+k=1;
+
+xi = p(1,:); %del mallado importado
+yi = p(2,:);
+elem = t(1:3,:)';
+fron_t = unique([e(1,:) e(2,:)]); %no repetidos
+
+fron_d = find(abs(xi.^2/4 + yi.^2/16 -1) < 0.01) ;
+
+
+[R M]=assema(p,t,1,1,0);
+
+
+A = a*M + k*R; 
+
+A0 = A;
+A0(fron_d,:)=0;
+A0(:,fron_d)=0;
+for i=fron_d
+    A0(i,i)=1;
+end    
+
+
+
+fi = f(xi,yi)';
+
+vect_b = M*fi; 
+vect_b(fron_d) = 0;
+
+uh = A0\vect_b;
+
+trisurf(elem,xi,yi,uh)
+
+%% EJERCICIO 10
+load("malla_ej10.mat")
+% Parámetros de la EDP
+f = @(x,y) 4000*exp(-10*(x.^2+y.^2));
+
+
+
+xi = p(1,:); 
+yi = p(2,:);
+elem = t(1:3,:)';
+
+a=0;
+k=1;
+% ahora toda la frontera es dirchlet
+fron_d = unique([e(1,:) e(2,:)]);
+
+% buscamos las fronteras que no son = 0 para cambiar cositas
+fron1= find (yi==0);
+fron3= find (abs(xi.^2 + yi.^2 -9) < 0.001);
+
+[R,M]=assema(p,t,1,1,0);
+
+A=a*M+k*R;
+
+% mtriz A
+A0=A;
+A0(fron_d,:)=0; %es 0 en la frontera
+A0(:,fron_d)=0;
+for i=fron_d
+ A0(i,i)=1; %eso va recorriendo los vectores de la frontera
+end
+
+% vector b
+gi=0*xi;
+gi(fron1)=4*xi(fron1)+4;
+gi(fron3)= 4*xi(fron3).^2;
+fi=f(xi,yi);
+
+vect_b=-A*gi'+M*fi';
+vect_b0 = vect_b;
+vect_b0(fron_d)=0;
+
+wh=A0\vect_b0;
+uh=wh+gi';
+trisurf(t(1:3,:)',xi,yi,uh)
+
+%% EJERCICIO 11 está planteado genéricamente porq me daba pereza
+
+f=@(x,y) x.^2+y;
+
+a=0;
+k=1; 
+b1=2;
+b2=1;
+
+xi=p(1,:);
+yi=p(2,:);
+
+elem=t(1:3,:)'; % para trisurf
+
+fron_d=unique([e(1,:) e(2,:)]);
+ind_1=find((xi==0)); % indices de los nodos en gamma1
+
+[R,M]=assema(p,t,1,1,0); 
+
+
+Cx = sparse(length(xi), length(xi));
+Cy=Cx;
+
+% para hallar las dphis utilizamos pdecgrad que calcula
+% el gradiente de una función escalar sobre un dominio 2D (o 3D) generado
+% por pdetool
+
+
+
+for i=1:length(xi) % columnas de C
+    phi_i=0*xi'; 
+    phi_i(i)=1; % genera la funcion base que vale uno en su nodo, 0 en el resto en cada iteración
+
+    [phi_i_x, phi_i_y]=pdecgrad(p,t,'1',phi_i); % esa funcion devuelve dos vectores, con las derivadas
+
+    [R, M, b]=assema(p,t,1,1,phi_i_x);
+    Cx(:,i)=b;
+    [R, M, b]=assema(p,t,1,1,phi_i_y);
+    Cy(:,i)=b;
+end
+
+A=b1*Cx+b2*Cy+k*R;
+
+A0=A; 
+A0(fron_d,:)=0;
+A0(:,fron_d)=0;
+
+for i=fron_d
+    A0(i,i)=1;
+end
+
+gi = 0*xi;
+gi(ind_1)= 1;
+fi=f(xi,yi)';
+
+vect_b=M*fi ; 
+vect_b(fron_d)=0;
+
+wh=A0\vect_b; %A0*uh=vect_b
+
+uh = wh + gi';
+
+trisurf(elem, xi, yi, uh)
+
+
