@@ -5,7 +5,7 @@ Códigos sobre MEF impartida en la asignatura de MEF de la especialidad matemát
 
 Este repositorio contiene una recopilación organizada de apuntes, prácticas, ejercicios y códigos relacionados con el Método de los Elementos Finitos, una técnica fundamental para la resolución numérica de ecuaciones diferenciales parciales en ingeniería y ciencias aplicadas.
 
-📚 Estructura del repositorio
+📚 Estructura del repositorio  
 🔹 T1-T2 (interpolar)
 Interpolación lineal y cuadrática, funciones de forma, elementos finitos en 1D. Construcción de funciones base y ensamblaje de matrices.
 
