@@ -1,0 +1,65 @@
+%% Ejercicio 1
+a = 1; k = 0.005;
+f = @(x) 2+sin(pi*x);
+
+%Intervalo de resolución del problema D=[c,d]
+c = 0; d = 2;
+
+%Nodos equiespaciados: 
+Ne = 35; h = (d-c)/Ne; xi = c:h:d;
+%Funciones base y sus derivadas
+phi0_g = @(x) 0.5*(1-x); 
+phi1_g = @(x) 0.5*(1+x);
+dphi0_g = @(x) 0*x -0.5; 
+dphi1_g = @(x) 0*x + 0.5;
+
+%Parámetros de cuadratura
+gi=[1 1]; 
+xgi= [-1/sqrt(3) 1/sqrt(3)/3]; 
+
+%Relleno matriz de masas de referencia:Usamos sparce porque son matrices "vacías" en vez de llenas de ceros y son más eficientes
+M_g = sparse(2,2);
+M_g(1,1) = sum(gi.*phi0_g(xgi).*phi0_g(xgi));
+M_g(1,2) = sum(gi.*phi0_g(xgi).*phi1_g(xgi));
+M_g(2,1) = sum(gi.*phi1_g(xgi).*phi0_g(xgi));
+M_g(2,2) = sum(gi.*phi1_g(xgi).*phi1_g(xgi));
+
+%Relleno matriz de rigidez de referencia: Al hacer operaciones con matrices sparce solo se alamcenan los resultados no nulos
+R_g = sparse(2,2);
+R_g(1,1) = sum(gi.*dphi0_g(xgi).*dphi0_g(xgi));
+R_g(1,2) = sum(gi.*dphi0_g(xgi).*dphi1_g(xgi));
+R_g(2,1) = sum(gi.*dphi1_g(xgi).*dphi0_g(xgi));
+R_g(2,2) = sum(gi.*dphi1_g(xgi).*dphi1_g(xgi));
+N = length(xi);
+M = sparse(N,N);
+R = sparse(N,N);
+
+%En los elementos de la diagonal principal se van solapando los valores de las matrices de referencia 
+for i=1:Ne
+    hi=xi(i+1)-xi(i); %Por si hubiera usado nodos no equiespaciados
+    M(i:i+1,i:i+1) = M(i:i+1,i:i+1)+hi*0.5*M_g;
+    R(i:i+1,i:i+1) = R(i:i+1,i:i+1)+(2/hi)*R_g;
+end
+
+A = a*M+k*R;
+A0 = A; %En vez de redimensionalizar, ponemos cero en la 1 y ult fila y columna (menos en posición 11 y NN)
+A0([1 end],:) = 0; %Es lo mismo que poner A0(1,:)=0 y A0(end,:)=0
+A0(:,[1 end]) = 0; %Es lo mismo que pober A0(:,1)=0 y A0(:,end)=0
+A0(1,1) = 1;
+A0(end,end) = 1;
+gi=0*xi';
+gi(1)=2;
+gi(end)=0;
+
+fi=f(xi)';
+vect_b=M*fi-A*gi;
+
+vect_b0=vect_b;
+vect_b0(1)=0; %Así obtengo: wi=0 para todo nodo de la frontera
+vect_b0(end)=0;
+wh=A0\vect_b0; 
+uh=wh+gi; 
+figure
+hold on
+x=0:0.01:2;
+plot(xi,uh,'-o')
